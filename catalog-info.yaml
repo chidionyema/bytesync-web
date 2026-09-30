@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: bytesync-web
+  title: Bytesync company site
+  description: The parent company's front door. Static Next.js export on Cloudflare Pages (idp ADR 0034 rung 4); brand and hostname are config (crew#690, crew#235).
+  annotations:
+    github.com/project-slug: chidionyema/bytesync-web
+  tags: [website, nextjs, cloudflare-pages, voice]
+  links:
+    - title: Ticket
+      url: https://github.com/chidionyema/crew/issues/690
+spec:
+  type: website
+  lifecycle: experimental
+  owner: group:default/bytesync
+  system: system:default/bytesync

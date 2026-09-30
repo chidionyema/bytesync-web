@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
+/* Tokens. Dark obsidian is the primary treatment; one phosphor accent, used only
+   where something is alive or actionable. Everything else is ink and paper-grey. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: oklch(13% 0.012 260);
+  --bg-2: oklch(17% 0.014 260);
+  --ink: oklch(96% 0.006 90);
+  --ink-2: oklch(76% 0.01 260);
+  --ink-3: oklch(64% 0.012 260);
+  --line: oklch(28% 0.014 260);
+  --accent: oklch(86% 0.17 165);
+  --accent-2: oklch(72% 0.15 300);
+  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+h1, h2, h3, .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: var(--accent); color: var(--bg); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* Cross-document view transitions: page to page fades and the wordmark carries over.
+   Chrome 126+ and Safari 18.2+; other browsers get plain navigation. */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: 220ms cubic-bezier(.2,.7,.2,1) both vt-out; }
+::view-transition-new(root) { animation: 320ms cubic-bezier(.2,.7,.2,1) both vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(8px); } }
+.wordmark { view-transition-name: wordmark; }
+.dock { view-transition-name: dock; }
+
+/* Scroll-driven reveal. Finished state is the default; animation only where supported
+   and only when motion is welcome. */
+.reveal { opacity: 1; transform: none; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
   }
 }
+@keyframes reveal { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Reading progress along the top edge, scroll-driven, no JS. */
+.progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); z-index: 60; }
+@supports (animation-timeline: scroll()) {
+  .progress { animation: grow linear both; animation-timeline: scroll(root); }
+}
+@keyframes grow { to { transform: scaleX(1); } }
+
+/* The live dot. */
+.live { position: relative; display: inline-block; width: .5rem; height: .5rem; border-radius: 999px; background: var(--accent); }
+.live::after { content: ""; position: absolute; inset: -4px; border-radius: 999px; border: 1px solid var(--accent); opacity: .6; animation: ping 1.8s cubic-bezier(0,0,.2,1) infinite; }
+@keyframes ping { 80%, 100% { transform: scale(2.2); opacity: 0; } }
+
+.eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.rule { height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+.prose-site p { color: var(--ink-2); line-height: 1.7; max-width: 62ch; }
+.prose-site p + p { margin-top: 1rem; }
+.btn { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid var(--line); border-radius: 999px; padding: .6rem 1.1rem; font-size: .9rem; color: var(--ink); transition: border-color .2s, background .2s, transform .2s; }
+.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.btn-accent { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 500; }
+.btn-accent:hover { background: color-mix(in oklch, var(--accent), white 8%); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .live::after { display: none; }
 }
