@@ -10,7 +10,7 @@ export const site = {
   tagline: "AI research and tooling, run by one founder and a crew of agents.",
   description:
     "Bytesync is an AI research and tooling company. We build tuned models and the tooling around them for specific jobs, and we run the company on that tooling: one founder, a crew of agents, one hive mind.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://bytesync.pages.dev",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://bytesync-c0u.pages.dev",
   github: { user: "chidionyema", url: "https://github.com/chidionyema" },
   contact: {
     // Set NEXT_PUBLIC_CONTACT_EMAIL once the domain and mailbox exist.
