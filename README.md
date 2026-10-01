@@ -28,6 +28,11 @@ npm run test:e2e     # playwright + axe against out/
 CI (`.github/workflows/ci.yml`) runs lint, typecheck, unit, build, Playwright+axe and Lighthouse
 CI with thresholds (median of 3 mobile runs: performance ≥ 0.80, accessibility ≥ 0.95,
 best practices and SEO ≥ 0.90; the mobile profile throttles CPU 4x, and the hero is gated off
-software renderers and weak devices so that budget holds). Deploy (`deploy.yml`) publishes `out/` with wrangler on push to `main` and
-then proves every page answers 200. Secrets are named, never pasted: `CLOUDFLARE_API_TOKEN`,
-`CLOUDFLARE_ACCOUNT_ID`; variables `SITE_URL`, `CONTACT_EMAIL`, `CF_PAGES_PROJECT`.
+software renderers and weak devices so that budget holds).
+
+**Deploy lives in `chidionyema/idp`** (`.github/workflows/bytesync-web-deploy.yml`), not here:
+the estate's Cloudflare root is a repository secret there, and GitHub secrets cannot be read or
+copied, so the run happens where the root is. It mints a one-hour Pages token from that root,
+builds this repository's `main`, creates the Pages project if it is missing, deploys `out/`,
+proves every page answers 200, and deletes the token. Nothing is pasted anywhere; the hostname
+and contact email are repository variables on idp.
