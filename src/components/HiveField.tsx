@@ -49,8 +49,8 @@ export function HiveField({ energy = 0.3 }: { energy?: number }) {
     const canvas = ref.current;
     if (!canvas) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const nav = navigator as Navigator & { connection?: { saveData?: boolean }; hardwareConcurrency?: number };
-    if (nav.connection?.saveData || (nav.hardwareConcurrency ?? 4) < 4) return;
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+    if (nav.connection?.saveData) return;
     const gl = canvas.getContext("webgl2", { antialias: false, alpha: false, powerPreference: "low-power" });
     if (!gl) return;
     // A software renderer (SwiftShader, llvmpipe, headless audits) would burn the main thread
